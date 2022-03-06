@@ -1,0 +1,16 @@
+/* Enclave.edl - Top EDL file. */
+
+enclave {
+    trusted {
+        public int ecall_compute_secrete_operation([user_check] int* inp, int size);
+        void ecall_nativeMatMul([user_check] float* w, int* dimW, float* inp, int* dimInp, float* out);
+        void ecall_precompute([user_check] float* weight, int* dim, int batch);
+        void ecall_addNoise([user_check] float* inp, int* dim, float* out);
+        void ecall_removeNoise([user_check] float* inp, int* dim, float* out); 
+    };
+    
+    untrusted {
+        void ocall_print_string([in, string] const char *str);
+    };
+
+};
