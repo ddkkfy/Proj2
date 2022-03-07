@@ -78,7 +78,7 @@ void ecall_precompute(float* weight, int* dim, int batch) {
     r = new float[batch * row];
     float* w = new float[row * col];
     memcpy(w, weight, sizeof(float)*row*col);
-    
+
     for (int t = 0; t < batch*row; t++)
         sgx_read_rand((uint8_t*)(r + t), 4);
 
@@ -94,6 +94,8 @@ void ecall_precompute(float* weight, int* dim, int batch) {
             *(pre + i * col + j) = temp;
         }
     }
+    
+    delete[]w;
 }
 
 void ecall_addNoise(float* inp, int* dim, float* out) {
