@@ -27,7 +27,7 @@ def main(args):
         y_recovered = sgxutils.removeNoise(y_blinded)
         method = time.process_time() - t1
         t2 = time.process_time()
-        s = sgxutils.nativeMatMul(l.weight, x)
+        #s = sgxutils.nativeMatMul(l.weight, x)
         native = time.process_time() - t2
 
         y_expected = l(x)
