@@ -3,6 +3,7 @@
 #include <stdio.h> /* vsnprintf */
 #include <string.h>
 #include <algorithm>    // std::max
+#include <sgx_trts.h>   //sgx_read_rand
 
 
 int printf(const char* fmt, ...)
@@ -48,9 +49,11 @@ void ecall_nativeMatMul(float* w, int* dimW, float* inp, int* dimInp, float* out
     memcpy(input, inp, sizeof(inp));
     for (int i = 0; i < row1; i++) {
         for (int j = 0; j < col2; j++) {
-            int temp = 0;
+            float temp = 0;
             for (int k = 0; k < col1; k++) {
-                temp += (*(weight + i * col1 + k)) * (*(input + k * col2 + j));
+                float left = *(weight + i * col1 + k);
+                float right = *(input + k * col2 + j);
+                temp += left * right;
                 //temp += weight[i][k]*input[k][j]
             }
             *(result + i * col2 + j) = temp;
@@ -63,7 +66,8 @@ void ecall_nativeMatMul(float* w, int* dimW, float* inp, int* dimInp, float* out
     delete[]result;
 }
 
-float* pre, r;   //new in precompute, delete in removeNoise
+float* pre;   //new in precompute, delete in removeNoise
+float* r;
 
 void ecall_precompute(float* weight, int* dim, int batch) {
     int row = *dim, col = *(dim + 1);
@@ -71,13 +75,16 @@ void ecall_precompute(float* weight, int* dim, int batch) {
 
     pre = new float[row * batch];
     r = new float[col * batch];
-    sgx_read_rand((uint8_t*)r, col * batch);
+    for (int t = 0; t < col*batch; t++)
+        sgx_read_rand((uint8_t*)(r + t), 4);
 
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < batch; j++) {
-            int temp = 0;
+            float temp = 0;
             for (int k = 0; k < col; k++) {
-                temp += (*(weight + i * col + k)) * (*(r + k * batch + j));
+                float left = *(weight + i * col + k);
+                float right = *(r + k * batch + j);
+                temp += left * right;
                 //temp += weight[i][k]*r[k][j]
             }
             *(pre + i * batch + j) = temp;
@@ -92,8 +99,10 @@ void ecall_addNoise(float* inp, int* dim, float* out) {
 
     memcpy(input, inp, sizeof(inp));
     for (int i = 0; i < row; i++) {
-        for (int j = 0; j < row; j++) {
-            *(result + i * col + j) = *(input + i * col + j) + *(r + i * col + j);
+        for (int j = 0; j < col; j++) {
+            float left = *(input + i * col + j);
+            float right = *(r + i * col + j);
+            *(result + i * col + j) = left + right;
         }
     }
     memcpy(out, result, sizeof(result));
@@ -109,8 +118,10 @@ void ecall_removeNoise(float* inp, int* dim, float* out) {
 
     memcpy(input, inp, sizeof(inp));
     for (int i = 0; i < row; i++) {
-        for (int j = 0; j < row; j++) {
-            *(result + i * col + j) = *(input + i * col + j) - *(pre + i * col + j);
+        for (int j = 0; j < col; j++) {
+            float left = *(input + i * col + j);
+            float right = *(pre + i * col + j);
+            *(result + i * col + j) = left - right;
         }
     }
     memcpy(out, result, sizeof(result));
