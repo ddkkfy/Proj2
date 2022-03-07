@@ -196,7 +196,7 @@ extern "C" {
 
     // c++ to pythorh interface
     // TODO: Uncomment removeNoisePython after done with implementing ecalls
-    void removeNoisePython(int* weight, int* dim, int* out) {
+    void removeNoisePython(int* inp, int* dim, int* out) {
         sgx_status_t ret = SGX_ERROR_UNEXPECTED;
         ret = ecall_removeNoise(eid, inp, dim, out);
         if (ret != SGX_SUCCESS) {
