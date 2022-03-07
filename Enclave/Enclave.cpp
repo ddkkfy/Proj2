@@ -59,7 +59,7 @@ void ecall_nativeMatMul(float* w, int* dimW, float* inp, int* dimInp, float* out
             *(result + i * col2 + j) = temp;
         }
     }
-    printf("Enclave native: %f\n", *(result+1));
+    //printf("Enclave native: %f\n", *(result+1));
     memcpy(out, result, sizeof(float)*row1*col2);
 
     delete[]weight;
@@ -125,6 +125,8 @@ void ecall_removeNoise(float* inp, int* dim, float* out) {
             *(result + i * col + j) = left - right;
         }
     }
+
+    printf("Enclave method [1][1]: %f\n", *(result + col + 1));
     memcpy(out, result, sizeof(float)*row*col);
 
     delete[]input;
