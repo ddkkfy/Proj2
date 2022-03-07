@@ -186,7 +186,7 @@ extern "C" {
     // TODO: Uncomment addNoisePython after done with implementing ecalls
     void addNoisePython(int* inp, int* dim, int* out) {
         sgx_status_t ret = SGX_ERROR_UNEXPECTED;
-        // ret = ecall_addNoise(eid, inp, dim, out);
+        ret = ecall_addNoise(eid, inp, dim, out);
         if (ret != SGX_SUCCESS) {
             print_error_message(ret);
             return;
@@ -198,7 +198,7 @@ extern "C" {
     // TODO: Uncomment removeNoisePython after done with implementing ecalls
     void removeNoisePython(int* weight, int* dim, int* out) {
         sgx_status_t ret = SGX_ERROR_UNEXPECTED;
-        // ret = ecall_removeNoise(eid, inp, dim, out);
+        ret = ecall_removeNoise(eid, inp, dim, out);
         if (ret != SGX_SUCCESS) {
             print_error_message(ret);
             return;
