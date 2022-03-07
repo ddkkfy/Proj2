@@ -57,7 +57,6 @@ void ecall_nativeMatMul(float* w, int* dimW, float* inp, int* dimInp, float* out
                 //temp += input[i][k]*weight[k][j]
             }
             *(result + i * col2 + j) = temp;
-            sum += temp;
         }
     }
     printf("Enclave native: %f\n", *(result+1));
