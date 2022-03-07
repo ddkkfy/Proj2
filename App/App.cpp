@@ -194,7 +194,7 @@ extern "C" {
 
     // c++ to pythorh interface
     // TODO: Uncomment addNoisePython after done with implementing ecalls
-    void addNoisePython(float* inp, int* dim, flot* out) {
+    void addNoisePython(float* inp, int* dim, float* out) {
         sgx_status_t ret = SGX_ERROR_UNEXPECTED;
         ret = ecall_addNoise(eid, inp, dim, out);
         if (ret != SGX_SUCCESS) {
