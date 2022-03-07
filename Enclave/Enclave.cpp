@@ -45,9 +45,8 @@ void ecall_nativeMatMul(float* w, int* dimW, float* inp, int* dimInp, float* out
     float* input = new float[row1 * col1];
     float* result = new float[row1 * col2];
 
-    memcpy(weight, w, sizeof(w));
-    memcpy(input, inp, sizeof(inp));
-    float sum = 0.0;
+    memcpy(weight, w, sizeof(float)*row2*col2);
+    memcpy(input, inp, sizeof(float)*row1*col1);
     for (int i = 0; i < row1; i++) {
         for (int j = 0; j < col2; j++) {
             float temp = 0;
@@ -61,8 +60,8 @@ void ecall_nativeMatMul(float* w, int* dimW, float* inp, int* dimInp, float* out
             sum += temp;
         }
     }
-    printf("Enclave native sum is: %f", sum);
-    memcpy(out, result, sizeof(result));
+    printf("Enclave native: %f\n", *(result+1));
+    memcpy(out, result, sizeof(float)*row1*col2);
 
     delete[]weight;
     delete[]input;
@@ -100,7 +99,7 @@ void ecall_addNoise(float* inp, int* dim, float* out) {
     float* input = new float[row * col];
     float* result = new float[row * col];
 
-    memcpy(input, inp, sizeof(inp));
+    memcpy(input, inp, sizeof(float)*row*col);
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {
             float left = *(input + i * col + j);
@@ -108,7 +107,7 @@ void ecall_addNoise(float* inp, int* dim, float* out) {
             *(result + i * col + j) = left + right;
         }
     }
-    memcpy(out, result, sizeof(result));
+    memcpy(out, result, sizeof(float)*row*col);
 
     delete[]input;
     delete[]result;
@@ -119,7 +118,7 @@ void ecall_removeNoise(float* inp, int* dim, float* out) {
     float* input = new float[row * col];
     float* result = new float[row * col];
 
-    memcpy(input, inp, sizeof(inp));
+    memcpy(input, inp, sizeof(float)*row*col);
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {
             float left = *(input + i * col + j);
@@ -127,7 +126,7 @@ void ecall_removeNoise(float* inp, int* dim, float* out) {
             *(result + i * col + j) = left - right;
         }
     }
-    memcpy(out, result, sizeof(result));
+    memcpy(out, result, sizeof(float)*row*col);
 
     delete[]input;
     delete[]result;
