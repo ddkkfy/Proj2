@@ -72,10 +72,13 @@ float* r;
 
 void ecall_precompute(float* weight, int* dim, int batch) {
     int row = *dim, col = *(dim + 1);
-    //size of r is col * batch
+    //size of r is batch * row
 
     pre = new float[batch * col];
     r = new float[batch * row];
+    float* w = new float[row * col];
+    memcpy(w, weight, sizeof(float)*row*col);
+    
     for (int t = 0; t < batch*row; t++)
         sgx_read_rand((uint8_t*)(r + t), 4);
 
@@ -84,7 +87,7 @@ void ecall_precompute(float* weight, int* dim, int batch) {
             float temp = 0;
             for (int k = 0; k < row; k++) {
                 float left = *(r + i * row + k);
-                float right = *(weight + k * col + j);
+                float right = *(w + k * col + j);
                 temp += left * right;
                 //temp += r[i][k]*weight[k][j]
             }
