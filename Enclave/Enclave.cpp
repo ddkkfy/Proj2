@@ -38,11 +38,11 @@ int ecall_compute_secrete_operation(int* inp, int size) {
 }
 
 void ecall_nativeMatMul(float* w, int* dimW, float* inp, int* dimInp, float* out) {
-    int row1 = *dimW, col1 = *(dimW + 1);
-    int row2 = *dimInp, col2 = *(dimInp + 1);
+    int row1 = *dimInp, col1 = *(dimInp + 1);
+    int row2 = *dimW, col2 = *(dimW + 1);
 
-    float* weight = new float[row1 * col1];
-    float* input = new float[row2 * col2];
+    float* weight = new float[row2 * col2];
+    float* input = new float[row1 * col1];
     float* result = new float[row1 * col2];
 
     memcpy(weight, w, sizeof(w));
@@ -51,10 +51,10 @@ void ecall_nativeMatMul(float* w, int* dimW, float* inp, int* dimInp, float* out
         for (int j = 0; j < col2; j++) {
             float temp = 0;
             for (int k = 0; k < col1; k++) {
-                float left = *(weight + i * col1 + k);
-                float right = *(input + k * col2 + j);
+                float left = *(input + i * col1 + k);
+                float right = *(weight + k * col2 + j);
                 temp += left * right;
-                //temp += weight[i][k]*input[k][j]
+                //temp += input[i][k]*weight[k][j]
             }
             *(result + i * col2 + j) = temp;
         }
@@ -73,21 +73,21 @@ void ecall_precompute(float* weight, int* dim, int batch) {
     int row = *dim, col = *(dim + 1);
     //size of r is col * batch
 
-    pre = new float[row * batch];
-    r = new float[col * batch];
-    for (int t = 0; t < col*batch; t++)
+    pre = new float[batch * col];
+    r = new float[batch * row];
+    for (int t = 0; t < batch*row; t++)
         sgx_read_rand((uint8_t*)(r + t), 4);
 
-    for (int i = 0; i < row; i++) {
-        for (int j = 0; j < batch; j++) {
+    for (int i = 0; i < batch; i++) {
+        for (int j = 0; j < col; j++) {
             float temp = 0;
-            for (int k = 0; k < col; k++) {
-                float left = *(weight + i * col + k);
-                float right = *(r + k * batch + j);
+            for (int k = 0; k < row; k++) {
+                float left = *(r + i * row + k);
+                float right = *(weight + k * col + j);
                 temp += left * right;
-                //temp += weight[i][k]*r[k][j]
+                //temp += r[i][k]*weight[k][j]
             }
-            *(pre + i * batch + j) = temp;
+            *(pre + i * col + j) = temp;
         }
     }
 }

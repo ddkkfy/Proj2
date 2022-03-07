@@ -46,7 +46,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--in_features', type=int, default=10, help="Input feature of Linear layer")
     parser.add_argument('--out_features', type=int, default=30,  help="Output feature of Linear layer")
-    parser.add_argument('--batch', type=int, default=30, help="Input batch size")
+    parser.add_argument('--batch', type=int, default=5, help="Input batch size")
 
     args = parser.parse_args()
     main(args)
