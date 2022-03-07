@@ -47,6 +47,7 @@ void ecall_nativeMatMul(float* w, int* dimW, float* inp, int* dimInp, float* out
 
     memcpy(weight, w, sizeof(w));
     memcpy(input, inp, sizeof(inp));
+    float sum = 0.0;
     for (int i = 0; i < row1; i++) {
         for (int j = 0; j < col2; j++) {
             float temp = 0;
@@ -57,8 +58,10 @@ void ecall_nativeMatMul(float* w, int* dimW, float* inp, int* dimInp, float* out
                 //temp += input[i][k]*weight[k][j]
             }
             *(result + i * col2 + j) = temp;
+            sum += temp;
         }
     }
+    printf("Enclave native sum is: %f", sum);
     memcpy(out, result, sizeof(result));
 
     delete[]weight;
