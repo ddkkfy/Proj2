@@ -40,7 +40,6 @@ def main(args):
         method_time = method_time + method
         native_time = native_time + native
 
-    #print("\n")
     print(f"The speedup is {round((native_time/method_time), 3)}x")
     return 0
     
