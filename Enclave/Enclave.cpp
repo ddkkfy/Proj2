@@ -17,6 +17,11 @@ int printf(const char* fmt, ...)
     return (int)strnlen(buf, BUFSIZ - 1) + 1;
 }
 
+void read_rand(float* r, int totalSize) {
+    for (int i = 0; i < totalSize; i++) {
+        r[i] = (float)i;
+    }
+}
 
 // the actual buffer of *inp is in untrusted memory
 // You can read from it, but never write to it
@@ -79,9 +84,7 @@ void ecall_precompute(float* weight, int* dim, int batch) {
     float* w = new float[row * col];
     memcpy(w, weight, sizeof(float)*row*col);
 
-    for (int t = 0; t < batch*row; t++)
-        //sgx_read_rand((uint8_t*)(r + t), 4);
-        *(r + t) = 0;
+    read_rand(r, batch*row);
 
     for (int i = 0; i < batch; i++) {
         for (int j = 0; j < col; j++) {
@@ -132,7 +135,7 @@ void ecall_removeNoise(float* inp, int* dim, float* out) {
         }
     }
 
-    printf("Enclave method [1][1]: %f\n", *(result + col + 1));
+    //printf("Enclave method [1][1]: %f\n", *(result + col + 1));
     memcpy(out, result, sizeof(float)*row*col);
 
     delete[]input;

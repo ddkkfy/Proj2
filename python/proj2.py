@@ -12,11 +12,10 @@ def main(args):
         l = torch.nn.Linear(args.in_features, args.out_features, bias=False).cuda()
         x = torch.randn(args.batch, args.in_features).cuda()
 
-
-        t1 = time.process_time()
         # given the weight; precompute w * r
         sgxutils.precompute(l.weight, args.batch)
 
+        t1 = time.process_time()
         # x_blinded = x + r
         x_blinded = sgxutils.addNoise(x)
 
@@ -33,9 +32,9 @@ def main(args):
         y_expected = l(x)
 
         print("Total diffs:", abs(y_expected - y_recovered).sum())
-        print("Method [1][1] is: ", y_recovered[1][1])
-        print("Native [1][1] is: ", s[1][1])
-        print("Expected [1][1] is: ", y_expected[1][1])
+        #print("Method [1][1] is: ", y_recovered[1][1])
+        #print("Native [1][1] is: ", s[1][1])
+        #print("Expected [1][1] is: ", y_expected[1][1])
         #print("Total native diffs:", abs(s - y_expected.cpu()).sum())
         #print("Total inner Enclave diffs:", abs(s - y_recovered.cpu()).sum())
         method_time = method_time + method
