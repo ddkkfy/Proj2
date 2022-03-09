@@ -32,11 +32,6 @@ def main(args):
         y_expected = l(x)
 
         print("Total diffs:", abs(y_expected - y_recovered).sum())
-        #print("Method [1][1] is: ", y_recovered[1][1])
-        #print("Native [1][1] is: ", s[1][1])
-        #print("Expected [1][1] is: ", y_expected[1][1])
-        #print("Total native diffs:", abs(s - y_expected.cpu()).sum())
-        #print("Total inner Enclave diffs:", abs(s - y_recovered.cpu()).sum())
         method_time = method_time + method
         native_time = native_time + native
 
